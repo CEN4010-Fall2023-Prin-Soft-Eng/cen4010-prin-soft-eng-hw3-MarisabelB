@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Get All Students</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+  <div id="navbar-container"></div>
+  <h1>Get All Students</h1>
+  
+  <button type="button" onclick="getAllStudents()">Get All Students</button>
+  <br>
+  <br>
+  <div id="getAllStudentsResponse"></div>
+
+  <script>
+    function getAllStudents() {
+      $.ajax({
+        url: "/students",
+        type: "get",
+        success: function (response) {
+          $("#getAllStudentsResponse").text("All Students Data: " + JSON.stringify(response));
+        },
+        error: function (xhr) {
+          $("#getAllStudentsResponse").text("Error: " + xhr.responseText);
+        }
+      });
+    }
+  </script>
+
+<script>
+  // Load the navbar content dynamically
+  $(document).ready(function () {
+    var navbarContainer = $("#navbar-container");
+    navbarContainer.load("navbar.html", function () {
+      // Once the navbar is loaded, highlight the active page
+      var pathName = window.location.pathname;
+      var pageName = pathName.split("/").pop();
+      
+      var navItems = navbarContainer.find(".nav.navbar-nav li");
+      
+      for (var i = 0; i < navItems.length; i++) {
+        var link = navItems[i].querySelector("a");
+        var href = link.getAttribute("href");
+        
+        if (href === pageName) {
+          navItems[i].classList.add("active");
+        } else {
+          navItems[i].classList.remove("active");
+        }
+      }
+    });
+  });
+</script>
+  <p><button><a href="index.html">Home</a></button></p>
+
+</body>
+</html>

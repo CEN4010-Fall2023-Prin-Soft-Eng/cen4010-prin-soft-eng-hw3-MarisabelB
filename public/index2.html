@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Server</title>
+</head>
+<body>
+  <!-- Include the Bootstrap navbar -->
+  <div id="navbar-container"></div>
+
+  <h1>Student Server</h1>
+  <h2>Marisabel Bermudez Z23677133 (and my best friend chatGPT)</h2>
+
+  <ul>
+    <!-- Add your student-related links here -->
+  </ul>
+
+  <script>
+    // Include the Bootstrap navbar from navbar.html
+    document.addEventListener("DOMContentLoaded", function() {
+      var navbarContainer = document.getElementById("navbar-container");
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "navbar.html", true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          navbarContainer.innerHTML = xhr.responseText;
+        }
+      };
+      xhr.send();
+    });
+  </script>
+</body>
+</html>

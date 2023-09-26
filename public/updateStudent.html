@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Update Student by Record ID</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+  <div id="navbar-container"></div>
+  <h1>Update Student by Record ID</h1>
+  
+  <form id="updateStudentForm">
+    <label for="record_id">Record ID:</label>
+    <input type="text" id="record_id" name="record_id" required><br>
+
+    <label for="first_name">First Name:</label>
+    <input type="text" id="first_name" name="first_name" required><br>
+
+    <label for="last_name">Last Name:</label>
+    <input type="text" id="last_name" name="last_name" required><br>
+
+    <label for="gpa">GPA:</label>
+    <input type="text" id="gpa" name="gpa" required><br>
+
+    <label for="enrolled">Enrolled:</label>
+    <input type="text" id="enrolled" name="enrolled" required><br>
+
+    <button type="button" onclick="updateStudent()">Update Student</button>
+  </form>
+
+  <br>
+  <br>
+  <div id="updateStudentResponse"></div>
+
+  <script>
+    function updateStudent() {
+      var record_id = $("#record_id").val();
+      var first_name = $("#first_name").val();
+      var last_name = $("#last_name").val();
+      var gpa = $("#gpa").val();
+      var enrolled = $("#enrolled").val();
+
+      $.ajax({
+        url: "/students/" + record_id,
+        type: "put",
+        data: {
+          first_name: first_name,
+          last_name: last_name,
+          gpa: gpa,
+          enrolled: enrolled
+        },
+        success: function (response) {
+          $("#updateStudentResponse").text("Student updated successfully. Record ID: " + response.record_id);
+        },
+        error: function (xhr) {
+          $("#updateStudentResponse").text("Error: " + xhr.responseText);
+        }
+      });
+    }
+  </script>
+  <script>
+    // Load the navbar content dynamically
+    $(document).ready(function () {
+      var navbarContainer = $("#navbar-container");
+      navbarContainer.load("navbar.html", function () {
+        // Once the navbar is loaded, highlight the active page
+        var pathName = window.location.pathname;
+        var pageName = pathName.split("/").pop();
+        
+        var navItems = navbarContainer.find(".nav.navbar-nav li");
+        
+        for (var i = 0; i < navItems.length; i++) {
+          var link = navItems[i].querySelector("a");
+          var href = link.getAttribute("href");
+          
+          if (href === pageName) {
+            navItems[i].classList.add("active");
+          } else {
+            navItems[i].classList.remove("active");
+          }
+        }
+      });
+    });
+  </script>
+  <p><button><a href="index.html">Home</a></button></p>
+  
+</body>
+</html>

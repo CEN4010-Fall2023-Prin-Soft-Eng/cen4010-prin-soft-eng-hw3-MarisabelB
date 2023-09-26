@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Search Students by Last Name</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+  <div id="navbar-container"></div>
+  <h1>Search Students by Last Name</h1>
+  
+  <form id="searchStudentsForm">
+    <label for="last_name">Last Name:</label>
+    <input type="text" id="last_name" name="last_name" required><br>
+
+    <button type="button" onclick="searchStudents()">Search Students</button>
+  </form>
+
+  <br>
+  <br>
+  <div id="searchStudentsResponse"></div>
+
+  <script>
+    function searchStudents() {
+      var last_name = $("#last_name").val();
+
+      $.ajax({
+        url: "/students/search/" + last_name,
+        type: "get",
+        success: function (response) {
+          if (response.students.length > 0) {
+            var studentList = "<ul>";
+            response.students.forEach(function (student) {
+              studentList += "<li>" + student.first_name + " " + student.last_name + "</li>";
+            });
+            studentList += "</ul>";
+            $("#searchStudentsResponse").html("Matching Students:<br>" + studentList);
+          } else {
+            $("#searchStudentsResponse").text("No students found with the provided last name.");
+          }
+        },
+        error: function (xhr) {
+          $("#searchStudentsResponse").text("Error: " + xhr.responseText);
+        }
+      });
+    }
+  </script>
+ <script>
+  // Load the navbar content dynamically
+  $(document).ready(function () {
+    var navbarContainer = $("#navbar-container");
+    navbarContainer.load("navbar.html", function () {
+      // Once the navbar is loaded, highlight the active page
+      var pathName = window.location.pathname;
+      var pageName = pathName.split("/").pop();
+      
+      var navItems = navbarContainer.find(".nav.navbar-nav li");
+      
+      for (var i = 0; i < navItems.length; i++) {
+        var link = navItems[i].querySelector("a");
+        var href = link.getAttribute("href");
+        
+        if (href === pageName) {
+          navItems[i].classList.add("active");
+        } else {
+          navItems[i].classList.remove("active");
+        }
+      }
+    });
+  });
+</script>
+  <p><button><a href="index.html">Home</a></button></p>
+
+</body>
+</html>

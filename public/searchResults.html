@@ -1,0 +1,45 @@
+<!-- filename: searchResults.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Search Result</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+  <h1>Search Results:</h1>
+
+  <div id="results"></div>
+
+  <script>
+    // Function to send a search request and display results
+    function searchStudents() {
+      var query = new URLSearchParams(window.location.search).get('query');
+      $.ajax({
+        url: "http://localhost:5678/searchall/" + query,
+        type: "get",
+        success: function (response) {
+          if (response && response.length > 0) {
+            var resultsHtml = "<ul>";
+            response.forEach(function (student) {
+              resultsHtml += "<li>" + student.first_name + " " + student.last_name + "</li>";
+            });
+            resultsHtml += "</ul>";
+            $("#results").html(resultsHtml);
+          } else {
+            $("#results").html("<p>No matching students found.</p>");
+          }
+        },
+        error: function (xhr) {
+          $("#results").html("<p>Error: " + xhr.responseText + "</p>");
+        }
+      });
+    }
+
+    // Call the search function when the page loads
+    $(document).ready(function () {
+      searchStudents();
+    });
+  </script>
+
+</body>
+</html>

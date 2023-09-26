@@ -316,6 +316,82 @@ app.delete('/students/:record_id', function (req, res) {
 
 }); //end delete method
 
+/**
+ * @swagger
+ * /students/search/{last_name}:
+ *   get:
+ *     summary: Search for students by last name.
+ *     description: Use this endpoint to search for students by their last name.
+ *     parameters:
+ *       - name: last_name
+ *         description: Student's last name for searching.
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Success. An array of matching students has been retrieved.
+ *       404:
+ *         description: Error. No students found with the provided last name.
+ *       500:
+ *         description: Error. Internal server error occurred.
+ */
+app.get('/students/search/:last_name', function (req, res) {
+  var lastName = req.params.last_name;
+  var obj = {};
+
+  glob("students/*.json", null, function (err, files) {
+    if (err) {
+      return res.status(500).send({ "message": "error - internal server error" });
+    }
+
+    var matchingStudents = [];
+    files.forEach(function (file) {
+      var data = fs.readFileSync(file, 'utf8');
+      var student = JSON.parse(data);
+      if (student.last_name === lastName) {
+        matchingStudents.push(student);
+      }
+    });
+
+    if (matchingStudents.length > 0) {
+      var obj = {};
+      obj.students = matchingStudents;
+      return res.status(200).send(obj);
+    } else {
+      return res.status(404).send({ "message": "error - no students found with the provided last name" });
+    }
+  });
+});
+
+// Add a new endpoint to search all students by first and last name
+app.get('/searchall/:query', function (req, res) {
+  var query = req.params.query.toLowerCase();
+
+  // Read all student files and filter by first and last name
+  glob("students/*.json", null, function (err, files) {
+    if (err) {
+      return res.status(500).send({ "message": "error - internal server error" });
+    }
+
+    var matchingStudents = [];
+    files.forEach(function (file) {
+      var studentData = JSON.parse(fs.readFileSync(file, 'utf8'));
+      var fullName = (studentData.first_name + " " + studentData.last_name).toLowerCase();
+      if (fullName.includes(query)) {
+        matchingStudents.push(studentData);
+      }
+    });
+
+    if (matchingStudents.length === 0) {
+      return res.status(404).send({ "message": "No matching students found." });
+    }
+
+    return res.status(200).send(matchingStudents);
+  });
+});
+
 function checkStudentExists(files, obj, fname, lname, res) {
   console.log("checkStudentExists")
   listOfStudents = obj;
